@@ -11,7 +11,7 @@ function player_is_dead()
 // i < monsters_spawn
 function spawner_monsters()
 {               
-    for(var i = 0; i < 1; i++){
+    for(var i = 0; i < 0; i++){
         
         /* enemy_obj, speed, damage, image, health */
         enemy(monsters[i], 3, 40, king, 100);
@@ -22,16 +22,27 @@ function spawner_monsters()
         ctx.fillRect(enemy_obj.x - image.width + 5, enemy_obj.y - image.height + 5, monsters[i].health, 8);// x, y, width, height
         if(monsters[i].health <= 0)
         {
-            
+            var random_spawn_x = Math.random().toFixed();
+            var x_monster = 0;
             max_monsters -= 1;
+            
+            if(random_spawn_x == 1) 
+            {
+                x_monster = cvs.width + 10;
+            }
+            else if(random_spawn_x == 1) 
+            {
+                x_monster = -10;
+            }
             
             // Великолепное удаление монстра
             monsters[i] = {
-                x : cvs.width + 10,
+                x : x_monster,
                 y : 300,
                 health :100,
             };  
             score += 1;
+            money += +getRandomArbitary(1, 6).toFixed();
         }
     }
 }
@@ -118,20 +129,20 @@ function camera_move()
 {
     if(player_X <= 0)
     {
-    //   console.log('x <');
-}
-else if(player_X >= cvs.width)
-{
-    //   console.log('x >');
-}
-else  if(player_Y <= 0)
-{
-    //  console.log('y ^');
-}
-else  if(player_Y >= cvs.height)
-{
-    //   console.log('y');
-}
+        //   console.log('x <');
+    }
+    else if(player_X >= cvs.width)
+    {
+        //   console.log('x >');
+    }
+    else  if(player_Y <= 0)
+    {
+        //  console.log('y ^');
+    }
+    else  if(player_Y >= cvs.height)
+    {
+        //   console.log('y');
+    }
 }
 
 
@@ -172,6 +183,110 @@ function getRandomArbitary(min, max)
 {
     return Math.random() * (max - min) + min;
 }
+
+function money_fnc_canvas()
+{
+    // MONEY TEXT
+    ctx.fillStyle = "#D8D511";
+    ctx.font = 'normal 40px sans-serif';
+    ctx.fillText(money, cvs.width / 2, 50); // text, x , y
+}
+
+
+
+
+function skill_time(pos_x, pos_y, width, height, arr_skill)
+{
+    this.pos_x = pos_x;
+    this.pos_y = pos_y;
+    this.width = width;
+    this.height = height;
+    this.arr_skill = arr_skill;
+    
+    if(mp_player >= skills[arr_skill].sk_mana && skills[arr_skill].skill_active == true)
+    {
+        skills[arr_skill].time_sk_live = skills[arr_skill].time_sk;
+        mp_player -= skills[arr_skill].sk_mana;
+        skills[arr_skill].skill_active = false; // SKILL
+        
+        
+        interval_skill = setInterval(function(){
+            if(skills[arr_skill].time_sk_live > 0) // SKILL
+            {
+                skills[arr_skill].time_sk_live -= 1; // SKILL
+                function drawtime(){
+                    // TIME TEXT
+                    ctx.fillStyle = "#00000088";
+                    ctx.fillRect(pos_x, pos_y, width, height);// x, y, width, height
+                    ctx.fillStyle = "#D8D8D8";
+                    ctx.font = 'bold 15px sans-serif';
+                    ctx.fillText(skills[arr_skill].time_sk_live, pos_x + 14, pos_y + 26); // text, x , y
+                    requestAnimationFrame(drawtime);
+                }
+                drawtime();
+            }
+            else if (skills[arr_skill].time_sk_live <= 0) // SKILL
+            { 
+                
+                skills[arr_skill].skill_active = true; // SKILL
+                function drawImgSkill(){
+                    ctx.drawImage(skills[arr_skill].img_sk, pos_x, pos_y, 40, 40);
+                    requestAnimationFrame(drawImgSkill);
+                }
+                drawImgSkill();
+                
+                clearInterval(interval_skill);
+            }
+            
+        },1000);
+    }
+    else if (mp_player < skills[arr_skill].sk_mana)
+    {
+        console.log('no mana'); 
+    }
+    else if (skills[arr_skill].skill_active == false) // SKILL
+    {
+        console.log('skill ne activen kd - ' + skills[arr_skill].time_sk_live); 
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

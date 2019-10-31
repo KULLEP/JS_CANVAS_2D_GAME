@@ -9,7 +9,6 @@ var king = new Image();
 var cricle = new Image();
 var bg = new Image();
 
-
 player.src = "images/king/KINGISSE.png";
 cricle.src = "images/cricle.png";
 king.src = "images/bird.png";
@@ -27,6 +26,7 @@ player_speed_y = 0,
 player_is_kick = false,
 player_dmg = 50,
 score = 0,
+money = 0,
 
 gravity = 2,
 
@@ -68,46 +68,9 @@ monsters.forEach(function(item, i, arr) {
 
 
 
-var skill_is_active = false;
-
-function timerStart(second) {
-    this.second = second;
-    setInterval(function(){
-        if(second > 0)
-        {
-            second -= 1;
-        }
-        else if (second <= 0)
-        {
-            console.log('scill active');
-            return skill_is_active = true;
-        }
-        console.log(second);
-    },1000);
-}
-
-timerStart(5);
-
-if( skill_is_active == true)
-{
-    console.log(1); 
-}
-
-
-
-
-
 monsters_spawn = Math.floor(getRandomArbitary(2, monsters.length));
 //console.log(monsters_spawn);
 var max_monsters = monsters_spawn;
-
-
-
-
-
-
-
-
 
 
 
@@ -118,11 +81,16 @@ var max_monsters = monsters_spawn;
 function draw(){
     
     
+    
+    
     // camera_move();
     
     
     // BG
     ctx.drawImage(bg, 0, 0, cvs.width, cvs.height);
+    
+    // MONEY
+    money_fnc_canvas();
     
     // KING
     spawner_monsters();
@@ -153,7 +121,7 @@ function draw(){
         player_speed_x -= 2;  
     }
     
-    // SKILLS
+    
     
     // E KICK
     if (keys['69']) {
@@ -161,7 +129,40 @@ function draw(){
     }
     
     
+    // SKILLS IMAGE
+    // 1
+    ctx.drawImage(skills[0].img_sk, 200, 5, 40, 40);
+    // 2
+    ctx.drawImage(skills[1].img_sk, 260, 5, 40, 40);
+    // 3
+    ctx.drawImage(skills[2].img_sk, 320, 5, 40, 40);
+    // 4
+    ctx.drawImage(skills[3].img_sk, 380, 5, 40, 40);
     
+    // SKILLS CLICK
+    // pos_x, pos_y, width, height, arr_skill
+ 
+
+    
+    // 1 
+    if (keys['49']) {
+        skill_time(200, 5, 40, 40, 0);
+    }
+    
+    // 2 
+    if (keys['50']) {
+        skill_time(260, 5, 40, 40, 1);
+    }
+    
+    // 3 
+    if (keys['51']) {
+        skill_time(320, 5, 40, 40, 2);
+    }
+    
+    // 4 
+    if (keys['52']) {
+        skill_time(380, 5, 40, 40, 3);
+    }
     
     
     player_speed_y += gravity;
