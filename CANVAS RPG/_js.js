@@ -1,23 +1,13 @@
-var cvs = document.getElementById("canvas");
-var ctx = cvs.getContext("2d");
 
+var game_is_pause = false; // Пауза игры
 
-// Загрузка картинок
-
-var player = new Image();
-var king = new Image();
-var cricle = new Image();
-var bg = new Image();
-
-player.src = "images/king/KINGISSE.png";
-cricle.src = "images/cricle.png";
-king.src = "images/bird.png";
-bg.src = "images/bg.jpg";
-
+ 
 
 // Некоторые переменные
 
 var 
+global_player_X = cvs.width / 2;
+global_player_Y = 0;
 player_X = cvs.width / 2,
 player_Y = cvs.height / 2,
 player_jump = false,
@@ -67,7 +57,6 @@ monsters.forEach(function(item, i, arr) {
 });
 
 
-
 monsters_spawn = Math.floor(getRandomArbitary(2, monsters.length));
 //console.log(monsters_spawn);
 var max_monsters = monsters_spawn;
@@ -77,121 +66,166 @@ var max_monsters = monsters_spawn;
 
 
 // Рисовать
-
 function draw(){
-    
-    
-    
-    
-    // camera_move();
-    
-    
-    // BG
-    ctx.drawImage(bg, 0, 0, cvs.width, cvs.height);
-    
-    // MONEY
-    money_fnc_canvas();
-    
-    // KING
-    spawner_monsters();
-    
-    if (max_monsters == 0)
+    if(game_is_pause == false)
     {
-        console.log('all killed');
+        if(global_player_X < -50)
+        {
+            global_player_X = - 50;
+        }
+        else if(global_player_X > cvs.width * 1.5)
+        {
+            global_player_X = cvs.width * 1.5;
+        }
+        
+        
+        
+        // BG GAME
+        BackGround_fnc();
+        
+        // OBJECT GAME
+        Object_fnc();
+        
+        // MONEY
+        money_fnc_canvas();
+        
+         // KING
         spawner_monsters();
+        /*
+        if (max_monsters == 0)
+        {
+            console.log('all killed');
+            spawner_monsters();
+        }
+        */
+        // ESC
+        document.querySelector('html').onkeyup = function(event)
+        {
+            if(event.keyCode == '27')
+            {
+                game_is_pause = true;
+            }
+        }
+        
+        
+        if (keys['68']) player_speed_x += 1.5;     // D
+        if (keys['65']) player_speed_x -= 1.5;     // A
+        if (keys['69']) player_kick_fnc();       // E KICK
+        if (keys['87'] && player_jump == true) { // W
+            player_speed_y -= 30;
+            player_jump = false;
+        }
+        
+        // SKILLS IMAGE
+        ctx.drawImage(skills[0].img_sk, 200, 5, 40, 40);  // 1
+        ctx.drawImage(skills[1].img_sk, 260, 5, 40, 40);  // 2
+        ctx.drawImage(skills[2].img_sk, 320, 5, 40, 40);  // 3
+        ctx.drawImage(skills[3].img_sk, 380, 5, 40, 40);  // 4
+        
+        // SKILLS CLICK
+        // pos_x, pos_y, width, height, arr_skill
+        
+        // 1 
+        if (keys['49']) {
+            skill_time(200, 5, 40, 40, 0);
+        }
+        
+        // 2 
+        if (keys['50']) {
+            skill_time(260, 5, 40, 40, 1);
+        }
+        
+        // 3 
+        if (keys['51']) {
+            skill_time(320, 5, 40, 40, 2);
+        }
+        
+        // 4 
+        if (keys['52']) {
+            skill_time(380, 5, 40, 40, 3);
+        }
+        
+        
+        player_speed_y += gravity;
+        player_Y += player_speed_y;
+        player_X += player_speed_x;
+        player_speed_x *= 0.9;
+        player_speed_y *= 0.9;
+        
+        
+        if (player_Y >= cvs.height - player.height/2 - map[0][1].img.height) {
+            player_jump = true;
+            player_Y = cvs.height - player.height/2 - map[0][1].img.height; // - fg.height;
+            player_speed_y = 0;
+        }
+        
+        if(player_X <= 100)
+        {
+            global_player_X -= 2;
+            map[0][0].speed -= 1;
+            map[0][1].speed -= 2;
+            
+            
+                for(let i = 0; i < map[1].length; i++)
+                {
+                    map[1][i].x += speed;
+                }
+            
+        }
+        else if(player_X >= cvs.width - 100)
+        {
+            global_player_X += 2;
+            map[0][0].speed += 1;
+            map[0][1].speed += 2;
+            
+            for(let i = 0; i < map[1].length; i++)
+                {
+                    map[1][i].x -= speed;
+                }
+        }
+        
+        if (player_X < -10)
+        {
+            player_speed_x *= -1.05;
+            player_X = -10;
+        }
+        else if(player_X > cvs.width - 20)
+        {
+            player_speed_x *= -1.05;
+            player_X = cvs.width - 20;
+        }
+        
+        // SPRITE PLAYER
+        ctx.drawImage(player, player_X, player_Y, player.width, player.height);
+        player_mana_heath(); // Обновление результата маны и хп
+        
+        
+        requestAnimationFrame(draw);
+    }
+    else if (game_is_pause == true)
+    {
+        // ESC
+        document.querySelector('html').onkeyup = function(event)
+        {
+            if(event.keyCode == '27')
+            {
+                game_is_pause = false;
+            }
+        }
+        
+        
+        
+        // BG PAUSE
+        ctx.drawImage(bg_menu, 0, 0, cvs.width, cvs.height);
+        
+        // SCORE
+        ctx.fillStyle = "#FF2D2D";
+        ctx.font = 'bold 35px sans-serif';
+        ctx.fillText('Game Pause', cvs.width / 2.2, 150);
+        
+        requestAnimationFrame(draw);
     }
     
-    
-    
-    // PLAYER START
-    
-    // W
-    if (keys['87'] && player_jump == true) {
-        player_speed_y -= 30;
-        player_jump = false;
-    }
-    
-    // D
-    if (keys['68']) {
-        player_speed_x += 2;
-    }
-    
-    // A
-    if (keys['65']) {
-        player_speed_x -= 2;  
-    }
-    
-    
-    
-    // E KICK
-    if (keys['69']) {
-        player_kick_fnc();
-    }
-    
-    
-    // SKILLS IMAGE
-    // 1
-    ctx.drawImage(skills[0].img_sk, 200, 5, 40, 40);
-    // 2
-    ctx.drawImage(skills[1].img_sk, 260, 5, 40, 40);
-    // 3
-    ctx.drawImage(skills[2].img_sk, 320, 5, 40, 40);
-    // 4
-    ctx.drawImage(skills[3].img_sk, 380, 5, 40, 40);
-    
-    // SKILLS CLICK
-    // pos_x, pos_y, width, height, arr_skill
- 
-
-    
-    // 1 
-    if (keys['49']) {
-        skill_time(200, 5, 40, 40, 0);
-    }
-    
-    // 2 
-    if (keys['50']) {
-        skill_time(260, 5, 40, 40, 1);
-    }
-    
-    // 3 
-    if (keys['51']) {
-        skill_time(320, 5, 40, 40, 2);
-    }
-    
-    // 4 
-    if (keys['52']) {
-        skill_time(380, 5, 40, 40, 3);
-    }
-    
-    
-    player_speed_y += gravity;
-    player_Y += player_speed_y;
-    player_X += player_speed_x;
-    player_speed_x *= 0.9;
-    player_speed_y *= 0.9;
-    
-    
-    if (player_Y >= cvs.height - player.height) {
-        player_jump = true;
-        player_Y = cvs.height - player.height; // - fg.height;
-        player_speed_y = 0;
-    }
-    
-    
-    
-    
-    
-    
-    // SPRITE PLAYER
-    ctx.drawImage(player, player_X, player_Y, player.width, player.height);
-    
-    
-    
-    player_mana_heath(); // Обновление результата маны и хп
-    
-    
-    requestAnimationFrame(draw);
 }
 
 draw();

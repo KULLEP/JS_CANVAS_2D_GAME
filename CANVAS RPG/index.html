@@ -13,12 +13,19 @@
 	<body class="bg-dark">
 		
         
-        <div class="col-12 row justify-content-center mt-5"> 
-            <canvas class="border-danger border" id="canvas" width="1240" height="512"></canvas>
+        <div class="col-12 row justify-content-center mt-5"> <!-- 1240   512 -->
+            <canvas class="border-danger border" id="canvas" width="1024" height="512"></canvas>
         </div>
         
-        <script src="skills.js"></script>
+        <script>
+            var cvs = document.getElementById("canvas");
+            var ctx = cvs.getContext("2d");
+        </script>
+        
+        
+        <script src="map_camera.js"></script>
         <script src="functions.js"></script>
+        <script src="skills.js"></script>
 		<script src="_js.js"></script>
         
         

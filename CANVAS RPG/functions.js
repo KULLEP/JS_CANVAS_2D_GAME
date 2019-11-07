@@ -14,7 +14,7 @@ function spawner_monsters()
     for(var i = 0; i < 0; i++){
         
         /* enemy_obj, speed, damage, image, health */
-        enemy(monsters[i], 3, 40, king, 100);
+        enemy(monsters[i], 3, 40, bird, 100);
         // HP
         ctx.fillStyle = "#000000";
         ctx.fillRect(enemy_obj.x - image.width + 5, enemy_obj.y - image.height + 5, 100, 8);// x, y, width, height
@@ -203,13 +203,17 @@ function skill_time(pos_x, pos_y, width, height, arr_skill)
     this.height = height;
     this.arr_skill = arr_skill;
     
+    
+    
     if(mp_player >= skills[arr_skill].sk_mana && skills[arr_skill].skill_active == true)
     {
+        
         skills[arr_skill].time_sk_live = skills[arr_skill].time_sk;
         mp_player -= skills[arr_skill].sk_mana;
         skills[arr_skill].skill_active = false; // SKILL
         
         
+        function_skills(arr_skill); // FUNCTION SKILL
         interval_skill = setInterval(function(){
             if(skills[arr_skill].time_sk_live > 0) // SKILL
             {
@@ -246,7 +250,7 @@ function skill_time(pos_x, pos_y, width, height, arr_skill)
     }
     else if (skills[arr_skill].skill_active == false) // SKILL
     {
-        console.log('skill ne activen kd - ' + skills[arr_skill].time_sk_live); 
+        console.log('KD - ' + skills[arr_skill].time_sk_live); 
     }
 }
 
